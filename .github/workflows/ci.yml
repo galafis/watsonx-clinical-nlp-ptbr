@@ -32,6 +32,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements-dev.txt
+          pip install -e .
           python -m spacy download pt_core_news_sm
       - name: Run tests
         env:
