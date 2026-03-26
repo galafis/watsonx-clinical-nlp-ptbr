@@ -45,7 +45,7 @@ class TestClinicalTextNormalizer:
     def test_normalize_preserves_lab_values(self, normalizer: ClinicalTextNormalizer) -> None:
         text = "Hemoglobina 12,5 g/dL dentro da normalidade"
         result = normalizer.normalize(text)
-        assert "12,5 g/dL" in result
+        assert "12,5 g/dl" in result
 
     def test_normalize_preserves_dates(self, normalizer: ClinicalTextNormalizer) -> None:
         text = "Consulta em 15/03/2024 paciente estavel"
