@@ -56,14 +56,16 @@ class FHIRFormatter:
             if resource:
                 resource_type = resource.get("resourceType", "Unknown")
                 resource_id = resource.get("id", str(uuid.uuid4()))
-                entries.append({
-                    "fullUrl": f"{self._base_url}/{resource_type}/{resource_id}",
-                    "resource": resource,
-                    "request": {
-                        "method": "POST",
-                        "url": resource_type,
-                    },
-                })
+                entries.append(
+                    {
+                        "fullUrl": f"{self._base_url}/{resource_type}/{resource_id}",
+                        "resource": resource,
+                        "request": {
+                            "method": "POST",
+                            "url": resource_type,
+                        },
+                    }
+                )
 
         bundle: dict[str, Any] = {
             "resourceType": "Bundle",
@@ -97,25 +99,31 @@ class FHIRFormatter:
         return converter(entity, patient_id)
 
     def _to_condition(
-        self, entity: ClinicalEntity, patient_id: str,
+        self,
+        entity: ClinicalEntity,
+        patient_id: str,
     ) -> dict[str, Any]:
         """Convert a CONDICAO entity to a FHIR Condition resource."""
         return {
             "resourceType": "Condition",
             "id": str(uuid.uuid4()),
             "clinicalStatus": {
-                "coding": [{
-                    "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
-                    "code": "active",
-                    "display": "Active",
-                }],
+                "coding": [
+                    {
+                        "system": "http://terminology.hl7.org/CodeSystem/condition-clinical",
+                        "code": "active",
+                        "display": "Active",
+                    }
+                ],
             },
             "verificationStatus": {
-                "coding": [{
-                    "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
-                    "code": "confirmed",
-                    "display": "Confirmed",
-                }],
+                "coding": [
+                    {
+                        "system": "http://terminology.hl7.org/CodeSystem/condition-ver-status",
+                        "code": "confirmed",
+                        "display": "Confirmed",
+                    }
+                ],
             },
             "code": {
                 "text": entity.text,
@@ -124,13 +132,17 @@ class FHIRFormatter:
                 "reference": f"Patient/{patient_id}",
             },
             "recordedDate": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-            "note": [{
-                "text": f"Extraido automaticamente por NLP (confianca: {entity.confidence:.2f})",
-            }],
+            "note": [
+                {
+                    "text": f"Extraido automaticamente por NLP (confianca: {entity.confidence:.2f})",
+                }
+            ],
         }
 
     def _to_medication_statement(
-        self, entity: ClinicalEntity, patient_id: str,
+        self,
+        entity: ClinicalEntity,
+        patient_id: str,
     ) -> dict[str, Any]:
         """Convert a MEDICAMENTO entity to a FHIR MedicationStatement resource."""
         return {
@@ -144,13 +156,17 @@ class FHIRFormatter:
                 "reference": f"Patient/{patient_id}",
             },
             "effectiveDateTime": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-            "note": [{
-                "text": f"Extraido automaticamente por NLP (confianca: {entity.confidence:.2f})",
-            }],
+            "note": [
+                {
+                    "text": f"Extraido automaticamente por NLP (confianca: {entity.confidence:.2f})",
+                }
+            ],
         }
 
     def _to_procedure(
-        self, entity: ClinicalEntity, patient_id: str,
+        self,
+        entity: ClinicalEntity,
+        patient_id: str,
     ) -> dict[str, Any]:
         """Convert a PROCEDIMENTO entity to a FHIR Procedure resource."""
         return {
@@ -164,13 +180,17 @@ class FHIRFormatter:
                 "reference": f"Patient/{patient_id}",
             },
             "performedDateTime": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
-            "note": [{
-                "text": f"Extraido automaticamente por NLP (confianca: {entity.confidence:.2f})",
-            }],
+            "note": [
+                {
+                    "text": f"Extraido automaticamente por NLP (confianca: {entity.confidence:.2f})",
+                }
+            ],
         }
 
     def _to_observation(
-        self, entity: ClinicalEntity, patient_id: str,
+        self,
+        entity: ClinicalEntity,
+        patient_id: str,
     ) -> dict[str, Any]:
         """Convert a VALOR_LABORATORIAL entity to a FHIR Observation resource."""
         return {
@@ -185,9 +205,11 @@ class FHIRFormatter:
             },
             "effectiveDateTime": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
             "valueString": entity.text,
-            "note": [{
-                "text": f"Extraido automaticamente por NLP (confianca: {entity.confidence:.2f})",
-            }],
+            "note": [
+                {
+                    "text": f"Extraido automaticamente por NLP (confianca: {entity.confidence:.2f})",
+                }
+            ],
         }
 
     def summary_to_composition(
@@ -207,14 +229,16 @@ class FHIRFormatter:
         sections: list[dict[str, Any]] = []
 
         if summary.get("condicoes"):
-            sections.append({
-                "title": "Condicoes Clinicas",
-                "code": {"text": "Conditions"},
-                "text": {
-                    "status": "generated",
-                    "div": "<div>" + ", ".join(summary["condicoes"]) + "</div>",
-                },
-            })
+            sections.append(
+                {
+                    "title": "Condicoes Clinicas",
+                    "code": {"text": "Conditions"},
+                    "text": {
+                        "status": "generated",
+                        "div": "<div>" + ", ".join(summary["condicoes"]) + "</div>",
+                    },
+                }
+            )
 
         if summary.get("medicamentos"):
             med_texts = []
@@ -223,45 +247,53 @@ class FHIRFormatter:
                 if med.get("dosagem"):
                     med_text += f" - {med['dosagem']}"
                 med_texts.append(med_text)
-            sections.append({
-                "title": "Medicamentos",
-                "code": {"text": "Medications"},
-                "text": {
-                    "status": "generated",
-                    "div": "<div>" + "; ".join(med_texts) + "</div>",
-                },
-            })
+            sections.append(
+                {
+                    "title": "Medicamentos",
+                    "code": {"text": "Medications"},
+                    "text": {
+                        "status": "generated",
+                        "div": "<div>" + "; ".join(med_texts) + "</div>",
+                    },
+                }
+            )
 
         if summary.get("procedimentos"):
-            sections.append({
-                "title": "Procedimentos",
-                "code": {"text": "Procedures"},
-                "text": {
-                    "status": "generated",
-                    "div": "<div>" + ", ".join(summary["procedimentos"]) + "</div>",
-                },
-            })
+            sections.append(
+                {
+                    "title": "Procedimentos",
+                    "code": {"text": "Procedures"},
+                    "text": {
+                        "status": "generated",
+                        "div": "<div>" + ", ".join(summary["procedimentos"]) + "</div>",
+                    },
+                }
+            )
 
         if summary.get("valores_laboratoriais"):
-            sections.append({
-                "title": "Exames Laboratoriais",
-                "code": {"text": "Lab Results"},
-                "text": {
-                    "status": "generated",
-                    "div": "<div>" + "; ".join(summary["valores_laboratoriais"]) + "</div>",
-                },
-            })
+            sections.append(
+                {
+                    "title": "Exames Laboratoriais",
+                    "code": {"text": "Lab Results"},
+                    "text": {
+                        "status": "generated",
+                        "div": "<div>" + "; ".join(summary["valores_laboratoriais"]) + "</div>",
+                    },
+                }
+            )
 
         composition: dict[str, Any] = {
             "resourceType": "Composition",
             "id": str(uuid.uuid4()),
             "status": "final",
             "type": {
-                "coding": [{
-                    "system": "http://loinc.org",
-                    "code": "11488-4",
-                    "display": "Consultation Note",
-                }],
+                "coding": [
+                    {
+                        "system": "http://loinc.org",
+                        "code": "11488-4",
+                        "display": "Consultation Note",
+                    }
+                ],
             },
             "subject": {"reference": f"Patient/{patient_id}"},
             "date": datetime.now(timezone.utc).isoformat(),

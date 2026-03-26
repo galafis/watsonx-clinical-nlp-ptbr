@@ -55,19 +55,28 @@ class ClinicalTokenizer:
 
     # Token patterns (order matters: most specific first)
     _TOKEN_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
-        ("measurement", re.compile(
-            r"\b\d+[.,]?\d*\s*(?:mg|ml|mcg|g|kg|mm|cm|mmHg|bpm|UI|mEq|mmol|"
-            r"L|dL|mL|ug|ng|pg|U|%|x10[³3]|/mm[³3])\b",
-            re.IGNORECASE,
-        )),
-        ("measurement", re.compile(
-            r"\b\d+[.,]?\d*\s*/\s*(?:mm[³3]|dL|L|mL)\b",
-            re.IGNORECASE,
-        )),
-        ("measurement", re.compile(
-            r"\b\d+x\d+\s*mmHg\b",
-            re.IGNORECASE,
-        )),
+        (
+            "measurement",
+            re.compile(
+                r"\b\d+[.,]?\d*\s*(?:mg|ml|mcg|g|kg|mm|cm|mmHg|bpm|UI|mEq|mmol|"
+                r"L|dL|mL|ug|ng|pg|U|%|x10[³3]|/mm[³3])\b",
+                re.IGNORECASE,
+            ),
+        ),
+        (
+            "measurement",
+            re.compile(
+                r"\b\d+[.,]?\d*\s*/\s*(?:mm[³3]|dL|L|mL)\b",
+                re.IGNORECASE,
+            ),
+        ),
+        (
+            "measurement",
+            re.compile(
+                r"\b\d+x\d+\s*mmHg\b",
+                re.IGNORECASE,
+            ),
+        ),
         ("number", re.compile(r"\b\d+[.,]\d+\b")),
         ("number", re.compile(r"\b\d+\b")),
         ("word", re.compile(r"\b[A-Za-z\u00C0-\u024F][A-Za-z\u00C0-\u024F'-]*\b")),
@@ -99,24 +108,28 @@ class ClinicalTokenizer:
             for token_type, pattern in self._TOKEN_PATTERNS:
                 match = pattern.match(text, pos)
                 if match:
-                    tokens.append(ClinicalToken(
-                        text=match.group(),
-                        start=match.start(),
-                        end=match.end(),
-                        token_type=token_type,
-                    ))
+                    tokens.append(
+                        ClinicalToken(
+                            text=match.group(),
+                            start=match.start(),
+                            end=match.end(),
+                            token_type=token_type,
+                        )
+                    )
                     pos = match.end()
                     matched = True
                     break
 
             if not matched:
                 # Single character fallback
-                tokens.append(ClinicalToken(
-                    text=text[pos],
-                    start=pos,
-                    end=pos + 1,
-                    token_type="unknown",
-                ))
+                tokens.append(
+                    ClinicalToken(
+                        text=text[pos],
+                        start=pos,
+                        end=pos + 1,
+                        token_type="unknown",
+                    )
+                )
                 pos += 1
 
         logger.debug("text_tokenized", token_count=len(tokens))
@@ -155,12 +168,14 @@ class ClinicalTokenizer:
 
             tokens = self.tokenize(stripped)
 
-            sentences.append(ClinicalSentence(
-                text=stripped,
-                start=start,
-                end=end,
-                tokens=tokens,
-            ))
+            sentences.append(
+                ClinicalSentence(
+                    text=stripped,
+                    start=start,
+                    end=end,
+                    tokens=tokens,
+                )
+            )
             offset = end
 
         logger.debug("sentences_split", sentence_count=len(sentences))

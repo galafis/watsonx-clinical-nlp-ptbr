@@ -93,7 +93,7 @@ class RelationExtractor:
         sorted_entities = sorted(entities, key=lambda e: e.start)
 
         for i, source in enumerate(sorted_entities):
-            for target in sorted_entities[i + 1:]:
+            for target in sorted_entities[i + 1 :]:
                 # Check if pair has a defined relation type
                 pair_key = (source.entity_type.value, target.entity_type.value)
                 relation_type = self.RELATION_TYPES.get(pair_key)
@@ -122,13 +122,15 @@ class RelationExtractor:
                 if relation_type == "HAS_DOSAGE":
                     confidence = min(1.0, confidence + 0.15)
 
-                relations.append(ClinicalRelation(
-                    source=source if pair_key[0] != "DOSAGEM" else target,
-                    target=target if pair_key[0] != "DOSAGEM" else source,
-                    relation_type=relation_type,
-                    confidence=round(confidence, 3),
-                    evidence=evidence,
-                ))
+                relations.append(
+                    ClinicalRelation(
+                        source=source if pair_key[0] != "DOSAGEM" else target,
+                        target=target if pair_key[0] != "DOSAGEM" else source,
+                        relation_type=relation_type,
+                        confidence=round(confidence, 3),
+                        evidence=evidence,
+                    )
+                )
 
         logger.info("relations_extracted", count=len(relations))
         return relations

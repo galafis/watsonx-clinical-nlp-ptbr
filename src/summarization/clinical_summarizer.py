@@ -114,10 +114,7 @@ class ClinicalSummarizer:
         # Build context from entities
         entity_context = self._format_entities_for_prompt(entities, relations or [])
 
-        prompt = (
-            f"{self._system_prompt}\n\n"
-            f"Entidades clinicas extraidas:\n{entity_context}\n\n"
-        )
+        prompt = f"{self._system_prompt}\n\nEntidades clinicas extraidas:\n{entity_context}\n\n"
 
         if original_text:
             # Include a truncated version of the original text
@@ -140,7 +137,8 @@ class ClinicalSummarizer:
         return response
 
     def _group_entities(
-        self, entities: list[ClinicalEntity],
+        self,
+        entities: list[ClinicalEntity],
     ) -> dict[str, list[str]]:
         """Group entities by type into categorized lists."""
         groups: dict[str, list[str]] = {
@@ -179,14 +177,10 @@ class ClinicalSummarizer:
                 profiles[med]["dosages"].append(rel.target.text)
             elif rel.relation_type == "TREATS":
                 med_entity = (
-                    rel.source
-                    if rel.source.entity_type == EntityType.MEDICAMENTO
-                    else rel.target
+                    rel.source if rel.source.entity_type == EntityType.MEDICAMENTO else rel.target
                 )
                 cond_entity = (
-                    rel.target
-                    if rel.target.entity_type == EntityType.CONDICAO
-                    else rel.source
+                    rel.target if rel.target.entity_type == EntityType.CONDICAO else rel.source
                 )
                 med = med_entity.text.lower()
                 if med not in profiles:
@@ -245,8 +239,6 @@ class ClinicalSummarizer:
         if relations:
             lines.append("\nRelacoes:")
             for rel in relations:
-                lines.append(
-                    f"  - {rel.source.text} --[{rel.relation_type}]--> {rel.target.text}"
-                )
+                lines.append(f"  - {rel.source.text} --[{rel.relation_type}]--> {rel.target.text}")
 
         return "\n".join(lines)

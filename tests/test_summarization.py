@@ -9,7 +9,6 @@ from src.ner.relation_extractor import ClinicalRelation
 from src.summarization.clinical_summarizer import ClinicalSummarizer
 from src.summarization.fhir_formatter import FHIRFormatter
 
-
 # ---------------------------------------------------------------------------
 # ClinicalSummarizer
 # ---------------------------------------------------------------------------
@@ -124,9 +123,7 @@ class TestClinicalSummarizer:
         sample_entities: list[ClinicalEntity],
         sample_relations: list[ClinicalRelation],
     ) -> None:
-        result = summarizer.summarize_from_entities(
-            sample_entities, sample_relations
-        )
+        result = summarizer.summarize_from_entities(sample_entities, sample_relations)
         assert "condicoes" in result
         assert "medicamentos" in result
         assert "procedimentos" in result
@@ -148,9 +145,7 @@ class TestClinicalSummarizer:
         sample_entities: list[ClinicalEntity],
         sample_relations: list[ClinicalRelation],
     ) -> None:
-        result = summarizer.summarize_from_entities(
-            sample_entities, sample_relations
-        )
+        result = summarizer.summarize_from_entities(sample_entities, sample_relations)
         meds = result["medicamentos"]
         assert len(meds) >= 2
 
@@ -169,9 +164,7 @@ class TestClinicalSummarizer:
         sample_entities: list[ClinicalEntity],
         sample_relations: list[ClinicalRelation],
     ) -> None:
-        result = summarizer.summarize_from_entities(
-            sample_entities, sample_relations
-        )
+        result = summarizer.summarize_from_entities(sample_entities, sample_relations)
         meds = result["medicamentos"]
         losartana_entry = next(m for m in meds if m["nome"].lower() == "losartana")
         assert "indicacao" in losartana_entry
@@ -186,9 +179,7 @@ class TestClinicalSummarizer:
         procs = [p.lower() for p in result["procedimentos"]]
         assert "hemograma" in procs
 
-    def test_summarize_deduplicates_entities(
-        self, summarizer: ClinicalSummarizer
-    ) -> None:
+    def test_summarize_deduplicates_entities(self, summarizer: ClinicalSummarizer) -> None:
         entities = [
             ClinicalEntity(
                 text="losartana",
@@ -285,9 +276,7 @@ class TestFHIRFormatter:
         # DOSAGEM entities are skipped, so all 4 should produce entries
         assert len(bundle["entry"]) == 4
 
-    def test_condition_resource(
-        self, formatter: FHIRFormatter
-    ) -> None:
+    def test_condition_resource(self, formatter: FHIRFormatter) -> None:
         entities = [
             ClinicalEntity(
                 text="hipertensao",
@@ -304,9 +293,7 @@ class TestFHIRFormatter:
         assert resource["clinicalStatus"]["coding"][0]["code"] == "active"
         assert "Patient/" in resource["subject"]["reference"]
 
-    def test_medication_statement_resource(
-        self, formatter: FHIRFormatter
-    ) -> None:
+    def test_medication_statement_resource(self, formatter: FHIRFormatter) -> None:
         entities = [
             ClinicalEntity(
                 text="losartana",
@@ -322,9 +309,7 @@ class TestFHIRFormatter:
         assert resource["medicationCodeableConcept"]["text"] == "losartana"
         assert resource["status"] == "active"
 
-    def test_procedure_resource(
-        self, formatter: FHIRFormatter
-    ) -> None:
+    def test_procedure_resource(self, formatter: FHIRFormatter) -> None:
         entities = [
             ClinicalEntity(
                 text="hemograma",
@@ -340,9 +325,7 @@ class TestFHIRFormatter:
         assert resource["code"]["text"] == "hemograma"
         assert resource["status"] == "completed"
 
-    def test_observation_resource(
-        self, formatter: FHIRFormatter
-    ) -> None:
+    def test_observation_resource(self, formatter: FHIRFormatter) -> None:
         entities = [
             ClinicalEntity(
                 text="Hemoglobina: 12,5 g/dL",
@@ -358,9 +341,7 @@ class TestFHIRFormatter:
         assert resource["status"] == "final"
         assert "12,5" in resource["valueString"]
 
-    def test_dosage_entity_skipped(
-        self, formatter: FHIRFormatter
-    ) -> None:
+    def test_dosage_entity_skipped(self, formatter: FHIRFormatter) -> None:
         entities = [
             ClinicalEntity(
                 text="50mg",
@@ -434,7 +415,12 @@ class TestFHIRFormatter:
         assert len(composition["section"]) == 2
 
     def test_composition_custom_patient(self, formatter: FHIRFormatter) -> None:
-        summary = {"condicoes": ["febre"], "medicamentos": [], "procedimentos": [], "valores_laboratoriais": []}
+        summary = {
+            "condicoes": ["febre"],
+            "medicamentos": [],
+            "procedimentos": [],
+            "valores_laboratoriais": [],
+        }
         composition = formatter.summary_to_composition(summary, patient_id="pac-999")
         assert composition["subject"]["reference"] == "Patient/pac-999"
 

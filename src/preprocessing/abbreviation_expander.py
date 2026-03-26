@@ -249,9 +249,13 @@ class AbbreviationExpander:
                 with open(file_path, encoding="utf-8") as f:
                     external: dict[str, Any] = json.load(f)
                 self._abbreviations.update(external)
-                logger.info("external_abbreviations_loaded", path=str(file_path), count=len(external))
+                logger.info(
+                    "external_abbreviations_loaded", path=str(file_path), count=len(external)
+                )
             except (json.JSONDecodeError, OSError) as e:
-                logger.warning("external_abbreviations_load_failed", path=str(file_path), error=str(e))
+                logger.warning(
+                    "external_abbreviations_load_failed", path=str(file_path), error=str(e)
+                )
         else:
             logger.debug("external_abbreviation_file_not_found", path=str(file_path))
 

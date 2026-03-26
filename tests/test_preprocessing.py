@@ -8,7 +8,6 @@ from src.preprocessing.abbreviation_expander import AbbreviationExpander
 from src.preprocessing.normalizer import ClinicalTextNormalizer
 from src.preprocessing.tokenizer import ClinicalTokenizer
 
-
 # ---------------------------------------------------------------------------
 # ClinicalTextNormalizer
 # ---------------------------------------------------------------------------
@@ -64,9 +63,7 @@ class TestClinicalTextNormalizer:
         assert "\u00b0" not in result
         assert "graus" in result
 
-    def test_normalize_removes_control_characters(
-        self, normalizer: ClinicalTextNormalizer
-    ) -> None:
+    def test_normalize_removes_control_characters(self, normalizer: ClinicalTextNormalizer) -> None:
         text = "Paciente\x00 com\x0b dor"
         result = normalizer.normalize(text)
         assert "\x00" not in result
@@ -78,10 +75,7 @@ class TestClinicalTextNormalizer:
         assert "\n\n\n" not in result
 
     def test_normalize_clinical_note(self, normalizer: ClinicalTextNormalizer) -> None:
-        text = (
-            "Paciente com HAS em uso de Losartana 50mg 1x/dia. "
-            "PA: 130x85 mmHg. FC: 72 bpm."
-        )
+        text = "Paciente com HAS em uso de Losartana 50mg 1x/dia. PA: 130x85 mmHg. FC: 72 bpm."
         result = normalizer.normalize(text)
         assert "50mg" in result
         assert result.strip() == result
@@ -132,9 +126,7 @@ class TestAbbreviationExpander:
         result = expander.expand("Dipirona 500mg VO de 6/6h")
         assert "Via Oral" in result
 
-    def test_expand_preserves_non_abbreviation_text(
-        self, expander: AbbreviationExpander
-    ) -> None:
+    def test_expand_preserves_non_abbreviation_text(self, expander: AbbreviationExpander) -> None:
         text = "Paciente nega alergias medicamentosas"
         result = expander.expand(text)
         assert result == text
@@ -208,7 +200,7 @@ class TestClinicalTokenizer:
         text = "Febre 38,5 graus"
         tokens = tokenizer.tokenize(text)
         for token in tokens:
-            assert text[token.start:token.end] == token.text
+            assert text[token.start : token.end] == token.text
 
     def test_tokenize_numbers(self, tokenizer: ClinicalTokenizer) -> None:
         tokens = tokenizer.tokenize("Idade 45 anos")
@@ -246,10 +238,7 @@ class TestClinicalTokenizer:
             assert len(sentence.tokens) > 0
 
     def test_tokenize_clinical_note(self, tokenizer: ClinicalTokenizer) -> None:
-        text = (
-            "Paciente com HAS em uso de Losartana 50mg 1x/dia. "
-            "PA: 130x85 mmHg. FC: 72 bpm."
-        )
+        text = "Paciente com HAS em uso de Losartana 50mg 1x/dia. PA: 130x85 mmHg. FC: 72 bpm."
         tokens = tokenizer.tokenize(text)
         assert len(tokens) > 10
         measurement_tokens = [t for t in tokens if t.token_type == "measurement"]

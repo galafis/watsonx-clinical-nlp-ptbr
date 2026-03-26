@@ -221,7 +221,7 @@ class TestClinicalNER:
         text = "losartana 50mg para hipertensao e metformina 850mg para diabetes"
         entities = ner.extract(text)
         for i, e1 in enumerate(entities):
-            for e2 in entities[i + 1:]:
+            for e2 in entities[i + 1 :]:
                 span1 = set(range(e1.start, e1.end))
                 span2 = set(range(e2.start, e2.end))
                 assert not span1 & span2, f"Overlap: {e1.text!r} and {e2.text!r}"

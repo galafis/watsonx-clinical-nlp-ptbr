@@ -15,9 +15,7 @@ class TestClinicalRelation:
         source = ClinicalEntity(
             text="losartana", entity_type=EntityType.MEDICAMENTO, start=0, end=9
         )
-        target = ClinicalEntity(
-            text="50mg", entity_type=EntityType.DOSAGEM, start=10, end=14
-        )
+        target = ClinicalEntity(text="50mg", entity_type=EntityType.DOSAGEM, start=10, end=14)
         relation = ClinicalRelation(
             source=source,
             target=target,
@@ -33,9 +31,7 @@ class TestClinicalRelation:
         source = ClinicalEntity(
             text="losartana", entity_type=EntityType.MEDICAMENTO, start=0, end=9
         )
-        target = ClinicalEntity(
-            text="50mg", entity_type=EntityType.DOSAGEM, start=10, end=14
-        )
+        target = ClinicalEntity(text="50mg", entity_type=EntityType.DOSAGEM, start=10, end=14)
         relation = ClinicalRelation(
             source=source,
             target=target,
@@ -61,9 +57,7 @@ class TestRelationExtractor:
 
     def test_extract_single_entity(self, extractor: RelationExtractor) -> None:
         entities = [
-            ClinicalEntity(
-                text="losartana", entity_type=EntityType.MEDICAMENTO, start=0, end=9
-            ),
+            ClinicalEntity(text="losartana", entity_type=EntityType.MEDICAMENTO, start=0, end=9),
         ]
         assert extractor.extract(entities, "losartana") == []
 
@@ -93,9 +87,7 @@ class TestRelationExtractor:
         assert has_dosage[0].source.entity_type == EntityType.MEDICAMENTO
         assert has_dosage[0].target.entity_type == EntityType.DOSAGEM
 
-    def test_extract_medication_condition_relation(
-        self, extractor: RelationExtractor
-    ) -> None:
+    def test_extract_medication_condition_relation(self, extractor: RelationExtractor) -> None:
         text = "losartana para hipertensao"
         entities = [
             ClinicalEntity(
@@ -115,9 +107,7 @@ class TestRelationExtractor:
         treats = [r for r in relations if r.relation_type == "TREATS"]
         assert len(treats) >= 1
 
-    def test_extract_procedure_condition_relation(
-        self, extractor: RelationExtractor
-    ) -> None:
+    def test_extract_procedure_condition_relation(self, extractor: RelationExtractor) -> None:
         text = "tomografia indicada para pneumonia"
         entities = [
             ClinicalEntity(
@@ -198,9 +188,7 @@ class TestRelationExtractor:
         assert len(relations) >= 1
         assert len(relations[0].evidence) > 0
 
-    def test_multiple_relations_from_clinical_note(
-        self, extractor: RelationExtractor
-    ) -> None:
+    def test_multiple_relations_from_clinical_note(self, extractor: RelationExtractor) -> None:
         text = "losartana 50mg para hipertensao, metformina 850mg para diabetes"
         entities = [
             ClinicalEntity(
@@ -246,23 +234,13 @@ class TestRelationExtractor:
         assert "TREATS" in relation_types
 
     def test_get_medication_profile(self, extractor: RelationExtractor) -> None:
-        med = ClinicalEntity(
-            text="losartana", entity_type=EntityType.MEDICAMENTO, start=0, end=9
-        )
-        dose = ClinicalEntity(
-            text="50mg", entity_type=EntityType.DOSAGEM, start=10, end=14
-        )
-        cond = ClinicalEntity(
-            text="hipertensao", entity_type=EntityType.CONDICAO, start=20, end=31
-        )
+        med = ClinicalEntity(text="losartana", entity_type=EntityType.MEDICAMENTO, start=0, end=9)
+        dose = ClinicalEntity(text="50mg", entity_type=EntityType.DOSAGEM, start=10, end=14)
+        cond = ClinicalEntity(text="hipertensao", entity_type=EntityType.CONDICAO, start=20, end=31)
 
         relations = [
-            ClinicalRelation(
-                source=med, target=dose, relation_type="HAS_DOSAGE", confidence=0.95
-            ),
-            ClinicalRelation(
-                source=med, target=cond, relation_type="TREATS", confidence=0.85
-            ),
+            ClinicalRelation(source=med, target=dose, relation_type="HAS_DOSAGE", confidence=0.95),
+            ClinicalRelation(source=med, target=cond, relation_type="TREATS", confidence=0.85),
         ]
 
         profiles = extractor.get_medication_profile(relations)
