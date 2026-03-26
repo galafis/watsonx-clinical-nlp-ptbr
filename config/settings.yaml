@@ -1,0 +1,76 @@
+# Watsonx Clinical NLP PT-BR Configuration
+
+watsonx:
+  generation:
+    model_id: "ibm/granite-13b-chat-v2"
+    parameters:
+      max_new_tokens: 2048
+      temperature: 0.1
+      top_p: 0.9
+      top_k: 40
+      repetition_penalty: 1.1
+      stop_sequences: ["\n\nHuman:", "\n\nUser:", "---"]
+
+ner:
+  entity_types:
+    - MEDICAMENTO
+    - DOSAGEM
+    - CONDICAO
+    - PROCEDIMENTO
+    - VALOR_LABORATORIAL
+  confidence_threshold: 0.65
+  max_entities_per_text: 200
+  use_spacy_backbone: true
+  spacy_model: "pt_core_news_sm"
+  pattern_matching:
+    enabled: true
+    case_sensitive: false
+
+preprocessing:
+  normalize_accents: false
+  lowercase: true
+  remove_extra_whitespace: true
+  expand_abbreviations: true
+  abbreviation_dict_path: "data/abbreviations/medical_abbreviations_ptbr.json"
+
+summarization:
+  system_prompt: |
+    Voce e um assistente clinico especializado em processar prontuarios medicos em portugues brasileiro.
+    Gere resumos clinicos estruturados a partir das entidades extraidas.
+    Sempre organize por: Condicoes, Medicamentos com dosagens, Procedimentos e Valores Laboratoriais.
+    Responda apenas com informacoes presentes no texto original.
+    Nunca invente dados clinicos.
+  max_summary_length: 1500
+  output_format: "structured"
+
+governance:
+  enabled: true
+  log_prompts: true
+  log_responses: true
+  track_performance: true
+  log_path: "./logs/governance"
+  phi_detection:
+    enabled: true
+    patterns:
+      - cpf
+      - nome_completo
+      - data_nascimento
+      - endereco
+      - telefone
+      - email
+      - rg
+    action_on_detect: "mask"
+  lgpd:
+    compliance_mode: "strict"
+    data_retention_days: 90
+    anonymization_enabled: true
+  drift_alerts:
+    enabled: true
+    precision_threshold: 0.80
+    recall_threshold: 0.75
+    check_interval_hours: 24
+
+fhir:
+  version: "R4"
+  base_url: "http://localhost:8080/fhir"
+  default_system: "http://loinc.org"
